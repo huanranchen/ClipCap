@@ -49,15 +49,15 @@ def train(
             pre, mask, ground_truth = decoder(x, text)
 
 
-            print(pre[mask].shape, ground_truth[mask])
-            for i in range(ground_truth[mask].shape[0]):
-                print(tokenizer.idx2word[ground_truth[mask][i].item()])
-
-            pre = pre[mask] # N*T, D
-            _, pre = torch.max(pre, dim = 1)    # N*T
-            for i in range(pre.shape[0]):
-                print(tokenizer.idx2word[pre[i].item()])
-            assert False
+            # print(pre[mask].shape, ground_truth[mask])
+            # for i in range(ground_truth[mask].shape[0]):
+            #     print(tokenizer.idx2word[ground_truth[mask][i].item()])
+            #
+            # pre = pre[mask] # N*T, D
+            # _, pre = torch.max(pre, dim = 1)    # N*T
+            # for i in range(pre.shape[0]):
+            #     print(tokenizer.idx2word[pre[i].item()])
+            # assert False
 
             loss = criterion(pre[mask], ground_truth[mask])
 
