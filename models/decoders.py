@@ -39,7 +39,6 @@ class Decoder(nn.Module):
         out = self.gpt(inputs_embeds=embedded, attention_mask=mask)
         return out.last_hidden_state, dic
 
-
     def forward(self, img_feature, text):
         '''
         :param img_feature:
@@ -47,7 +46,6 @@ class Decoder(nn.Module):
         :return:
         '''
         out, dic = self._gpt_forward(img_feature, text)
-
 
         # print(out.logits)
 
@@ -81,9 +79,21 @@ class Decoder(nn.Module):
             now_word_embedding = self.embedding(torch.tensor([now_word_idx])).unsqueeze(0)  # 1, 1, D
             x = torch.cat([x, now_word_embedding], dim=1)
             pre = self.gpt(inputs_embeds=x)
-            pre = pre.logits[:, -1, :]  #
+            pre = pre.last_hidden_state[:, -1, :]  #
             pre = self.classifier(pre)  # 1, D
             _, now_word_idx = torch.max(pre, dim=1)
+            now_word_idx = now_word_idx.item()
+            result.append(now_word_idx)
+
+        return result
+
+    def predict_one_with_ground_truth(self, image_feature, text):
+        # pre (1, T, D)
+        pre, _, _ = self.forward(image_feature, text)
+        pre = pre.squeeze(1)
+        result = []
+        for i in range(pre.shape[0]):
+            _, now_word_idx = torch.max(pre[i,:], dim = 0)
             now_word_idx = now_word_idx.item()
             result.append(now_word_idx)
 
